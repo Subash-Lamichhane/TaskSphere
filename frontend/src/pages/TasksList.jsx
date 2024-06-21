@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-const Test = () => {
-    const [tasks] = useState([
-        { title: 'Implement new feature', assignedTo: 'John Doe', dueDate: '2023-06-30', status: 'Completed', priority: 'High' },
-        { title: 'Fix bug in login flow', assignedTo: 'Sarah Ahn', dueDate: '2023-07-15', status: 'In Progress', priority: 'Medium' },
-        { title: 'Improve performance on landing page', assignedTo: 'Michael Reeves', dueDate: '2023-08-01', status: 'Overdue', priority: 'High' },
-        { title: 'Refactor codebase to use new libraries', assignedTo: 'Emily Wang', dueDate: '2023-09-30', status: 'In Progress', priority: 'Low' },
-      ]);
+const TasksList = (tasks) => {
+  console.log(tasks)
+    // const [tasks] = useState([
+    //     { title: 'Implement new feature', assignedTo: 'John Doe', dueDate: '2023-06-30', status: 'Completed', priority: 'High' },
+    //     { title: 'Fix bug in login flow', assignedTo: 'Sarah Ahn', dueDate: '2023-07-15', status: 'In Progress', priority: 'Medium' },
+    //     { title: 'Improve performance on landing page', assignedTo: 'Michael Reeves', dueDate: '2023-08-01', status: 'Overdue', priority: 'High' },
+    //     { title: 'Refactor codebase to use new libraries', assignedTo: 'Emily Wang', dueDate: '2023-09-30', status: 'In Progress', priority: 'Low' },
+    //   ]);
     
       return (
         <div className="container mx-auto p-6">
@@ -26,7 +27,7 @@ const Test = () => {
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm">
-              {tasks.map((task, index) => (
+            {tasks.map(task => (
                 <TaskRow key={index} task={task} />
               ))}
             </tbody>
@@ -35,9 +36,10 @@ const Test = () => {
       );
 }
 
-export default Test
+export default TasksList
 
 const TaskRow = ({ task }) => {
+    
     const statusClasses = {
       'Completed': 'bg-green-100 text-green-800',
       'In Progress': 'bg-yellow-100 text-yellow-800',
@@ -51,10 +53,11 @@ const TaskRow = ({ task }) => {
     };
   
     return (
+      
       <tr className="border-b border-gray-200 hover:bg-gray-100">
         <td className="py-3 px-4">{task.title}</td>
-        <td className="py-3 px-4">{task.assignedTo}</td>
-        <td className="py-3 px-4">{task.dueDate}</td>
+        <td className="py-3 px-4">{task.assigned_to}</td>
+        <td className="py-3 px-4">{task.due_date}</td>
         <td className="py-3 px-4">
           <span className={`px-2 py-1 rounded-full text-xs ${statusClasses[task.status]}`}>
             {task.status}

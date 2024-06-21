@@ -1,7 +1,11 @@
 // src/Dashboard.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import TaskList from './TaskList';
+import AdminView from './Dashboard/Admin';
+import ManagerView from './Dashboard/Manager';
+import EmployeeView from './Dashboard/Employee';
+import { useNavigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
 
 const Dashboard = () => {
     const [tasks, setTasks] = useState([]);
@@ -15,19 +19,25 @@ const Dashboard = () => {
     const [userDetail, setUserDetail] = useState(null);
     const [dueDate, setDueDate] = useState('');
     const [assignedToEmail, setAssignedToEmail] = useState('');
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:3000/api/tasks', {
-                    headers: {
-                        'x-access-token': token,
-                    },
-                });
-                setTasks(response.data.tasks);
-                setLoading(false);
+                if(token){
+                    const response = await axios.get('http://localhost:3000/api/tasks', {
+                        headers: {
+                            'x-access-token': token,
+                        },
+                    });
+                    setTasks(response.data.tasks);
+                    setLoading(false);
+                }else{
+                    navigate('/login')
+                }
             } catch (error) {
+                navigate('/login')
                 console.error('Error fetching tasks:', error);
             }
         };
@@ -46,7 +56,7 @@ const Dashboard = () => {
                 });
                 setUserDetail(response.data.user);
                 setUserRole(response.data.user.role);
-                setSelectedEmployees([response.data.user.email]); // Initialize selected employees with the user's email
+                setSelectedEmployees([response.data.user.email]);
 
             } catch (error) {
                 console.error('Error fetching user role:', error);
@@ -76,22 +86,25 @@ const Dashboard = () => {
         }
     }, [userRole]);
 
-    const handleMarkAsCompleted = async (taskId) => {
+    const handleDelete = async (taskTitle, assignedTo) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:3000/api/tasks/${taskId}`, {
+            await axios.delete(`http://localhost:3000/api/tasks/title/${taskTitle}`, {
                 headers: {
                     'x-access-token': token,
                 },
+                params: {
+                    assigned_to: assignedTo,
+                },
             });
-            setTasks(tasks.filter(task => task._id !== taskId));
+            setTasks(tasks.filter(task => task.title !== taskTitle || task.assigned_to !== assignedTo));
         } catch (error) {
-            console.error('Error marking task as completed:', error);
+            console.error('Error deleting task:', error);
         }
     };
 
     const handleCreateTeam = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         try {
             const token = localStorage.getItem('token');
 
@@ -104,39 +117,73 @@ const Dashboard = () => {
                 },
             });
             // Handle successful team creation, if needed
-            console.log('Team created:', response.data);
         } catch (error) {
             console.error('Error creating team:', error);
         }
-
     };
 
     const handleCreateTask = async (e) => {
         e.preventDefault();
         try {
-
-            if (userDetail.role == 'employee') {
-                setAssignedToEmail(userDetail.email)
+            if (userDetail.role === 'employee') {
+                setAssignedToEmail(userDetail.email);
+                const token = localStorage.getItem('token');
+                const response = await axios.post('http://localhost:3000/api/tasks', {
+                    title: newTaskName,
+                    description: newTaskDescription,
+                    status: 'not started',
+                    due_date: dueDate,
+                    assigned_to_email: userDetail.email,
+                    team_id: userDetail.team_id
+                }, {
+                    headers: {
+                        'x-access-token': token,
+                    },
+                });
+                setTasks([...tasks, response.data.task]);
+                setNewTaskName('');
+                setNewTaskDescription('');
+            } else {
+                const token = localStorage.getItem('token');
+                const response = await axios.post('http://localhost:3000/api/tasks', {
+                    title: newTaskName,
+                    description: newTaskDescription,
+                    status: 'not started',
+                    due_date: dueDate,
+                    assigned_to_email: assignedToEmail,
+                    team_id: userDetail.team_id
+                }, {
+                    headers: {
+                        'x-access-token': token,
+                    },
+                });
+                setTasks([...tasks, response.data.task]);
+                setNewTaskName('');
+                setNewTaskDescription('');
             }
+
+        } catch (error) {
+            console.error('Error creating task:', error);
+        }
+    };
+
+    const setCompleteHandler = async (taskTitle, assignedTo) => {
+        try {
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:3000/api/tasks', {
-                title: newTaskName,
-                description: newTaskDescription,
-                status: 'not started', // Default status for new tasks
-                due_date: dueDate, // Example: set due date as current date/time
-                assigned_to_email: assignedToEmail, // This can be set according to your application logic
-                team_id: userDetail.team_id
+            await axios.put(`http://localhost:3000/api/tasks/complete/${taskTitle}`, {
+                assigned_to: assignedTo,
             }, {
                 headers: {
                     'x-access-token': token,
                 },
             });
-            setTasks([...tasks, response.data.task]);
-            setNewTaskName('');
-            setNewTaskDescription('');
-            console.log('Task created:', response.data);
+            setTasks(tasks.map(task =>
+                task.title === taskTitle && task.assigned_to === assignedTo
+                    ? { ...task, status: 'completed' }
+                    : task
+            ));
         } catch (error) {
-            console.error('Error creating task:', error);
+            console.error('Error marking task as completed:', error);
         }
     };
 
@@ -148,44 +195,43 @@ const Dashboard = () => {
     };
 
     return (
+        <>
+        <Navbar/>
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold mb-4">Task Dashboard</h1>
-            {teamName}
             {loading ? (
                 <p>Loading...</p>
             ) : (
                 <>
-                    <TaskList tasks={tasks} onMarkAsCompleted={handleMarkAsCompleted} />
                     {userRole === 'admin' && (
-                        <p className="mt-4">
-                            Admin can see all tasks and manage teams.
-                        </p>
+                        <AdminView
+                        userDetail={userDetail}
+                            tasks={tasks}
+                            handleDelete={handleDelete}
+                            setCompleteHandler={setCompleteHandler}
+                        />
                     )}
-                    {(userRole === 'manager' || userRole === 'admin') && (
-                        <div className="mt-4">
-                            {userDetail && userDetail.team_id == null && (
-                                <>
-                                    <h2 className="text-xl font-bold mb-2">Add to Team</h2>
-                                    <form onSubmit={handleCreateTeam} className="space-y-2">
-                                        <div>
-                                            <label htmlFor="teamName" className="block text-sm font-medium text-gray-700">Team Name</label>
-                                            <input type="text" id="teamName" name="teamName" value={teamName} onChange={(e) => setTeamName(e.target.value)} required className="mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700">Select Employees</label>
-                                            {employeeEmails.map(email => (
-                                                <div key={email} className="flex items-center">
-                                                    <input type="checkbox" id={email} name={email} checked={selectedEmployees.includes(email)} onChange={() => handleCheckboxChange(email)} className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" />
-                                                    <label htmlFor={email} className="ml-2 block text-sm text-gray-900">{email}</label>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-4">Create Team</button>
-                                    </form>
-                                </>
-                            )}
-
-                        </div>
+                    {userRole === 'manager' && (
+                        <ManagerView
+                        userDetail={userDetail}
+                            tasks={tasks}
+                            handleDelete={handleDelete}
+                            setCompleteHandler={setCompleteHandler}
+                            employeeEmails={employeeEmails}
+                            handleCreateTeam={handleCreateTeam}
+                            selectedEmployees={selectedEmployees}
+                            handleCheckboxChange={handleCheckboxChange}
+                            teamName={teamName}
+                            setTeamName={setTeamName}
+                        />
+                    )}
+                    {userRole === 'employee' && (
+                        <EmployeeView
+                        userDetail={userDetail}
+                            tasks={tasks}
+                            handleDelete={handleDelete}
+                            setCompleteHandler={setCompleteHandler}
+                        />
                     )}
                     <h2 className="text-xl font-bold mt-8 mb-2">Create New Task</h2>
                     <form onSubmit={handleCreateTask} className="space-y-2">
@@ -199,19 +245,20 @@ const Dashboard = () => {
                         </div>
                         <div>
                             <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">Due Date</label>
-                            <input type="date" id="dueDate" name="dueDate" onChange={(e) => setDueDate(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
+                            <input type="date" id="dueDate" name="dueDate" onChange={(e) => setDueDate(e.target.value)} className="mt-1 block px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
                         </div>
-                        { (userRole === 'manager' || userRole === 'admin') && <>
+                        {(userRole === 'manager' || userRole === 'admin') && (
                             <div>
                                 <label htmlFor="assignedToEmail" className="block text-sm font-medium text-gray-700">Assigned To Email</label>
                                 <input type="email" id="assignedToEmail" name="assignedToEmail" onChange={(e) => setAssignedToEmail(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
                             </div>
-                        </>}
+                        )}
                         <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mt-4">Create Task</button>
                     </form>
                 </>
             )}
         </div>
+        </>
     );
 };
 
