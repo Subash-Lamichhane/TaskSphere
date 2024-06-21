@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import faqimage from "../../assets/images/faq.png";
+import faqimage from "../assets/images/faq.png";
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FAQ = () => {

@@ -2,6 +2,7 @@
 import React from 'react';
 import { MdDeleteForever } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 const TaskList = ({ tasks, handleDelete, setCompleted }) => {
   // if (!tasks || tasks.length === 0) {
@@ -60,9 +61,13 @@ const TaskRow = ({ task, deleteItem, setCompleted }) => {
     'Medium': 'bg-yellow-100 text-yellow-800',
     'Low': 'bg-green-100 text-green-800',
   };
+  const navigate= useNavigate()
+  const handleTaskClick=()=>{
+    navigate('/task-info', { state: { task } })
+  }
 
   return (
-    <tr className="border-b border-gray-200 hover:bg-gray-100">
+    <tr className="border-b border-gray-200 hover:bg-gray-100 hover:cursor-pointer" onClick={handleTaskClick}>
       <td className="py-3 px-4">{task.title}</td>
       <td className="py-3 px-4">{task.assigned_to}</td>
       <td className="py-3 px-4">{task.due_date}</td>

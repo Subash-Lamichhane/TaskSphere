@@ -20,7 +20,6 @@ const Navbar = () => {
         const token = localStorage.getItem('token');
         if (token) {
             setLoggedIn(true);
-            console.log("Logged in");
         } else {
             setLoggedIn(false);
         }

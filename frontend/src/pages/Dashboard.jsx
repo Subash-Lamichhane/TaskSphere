@@ -5,7 +5,7 @@ import AdminView from './Dashboard/Admin';
 import ManagerView from './Dashboard/Manager';
 import EmployeeView from './Dashboard/Employee';
 import { useNavigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Navbar from '../components/Navbar';
 
 const Dashboard = () => {
     const [tasks, setTasks] = useState([]);

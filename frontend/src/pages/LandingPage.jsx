@@ -5,9 +5,9 @@
  */
 import { Link } from "react-router-dom"
 import taskImage from '../assets/images/task2.png'
-import Navbar from "./components/Navbar"
-import Footer from "./components/Footer"
-import FAQ from "./components/FAQ"
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
+import FAQ from "../components/FAQ"
 function HeroSection() {
   return (
     <div className="bg-[#bba8ff]  w-full min-h-screen">

@@ -1,6 +1,6 @@
 // src/ManagerView.jsx
 import React from 'react';
-import TaskList from './../TaskList';
+import TaskList from '../TaskList';
 
 const ManagerView = ({ userDetail, tasks, handleDelete, setCompleteHandler, employeeEmails, handleCreateTeam, selectedEmployees, handleCheckboxChange, teamName, setTeamName }) => {
     return (

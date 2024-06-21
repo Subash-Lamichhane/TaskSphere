@@ -1,6 +1,6 @@
 // src/EmployeeView.jsx
 import React from 'react';
-import TaskList from './../TaskList';
+import TaskList from '../TaskList';
 
 const EmployeeView = ({ userDetail, tasks, handleDelete, setCompleteHandler }) => {
     return (
