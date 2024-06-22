@@ -81,6 +81,7 @@ app.get('/api/user-role', async (req, res) => {
         const decoded = jwt.verify(token, 'secret123');
         const { name, email, role } = decoded;
         const user = await User.findOne({email: email})
+        
         res.json({ status: 'ok', user:{ name, email, role, team_id: user.team_id} });
     } catch (error) {
         console.error('Error decoding token:', error);
@@ -99,6 +100,18 @@ app.get('/api/employees/emails', async (req, res) => {
         res.status(500).json({ status: 'error', error: err.message });
     }
 });
+
+app.get('/api/peopleDetails', async (req, res) => {
+    try {
+        const roles = ['employee', 'manager'];
+        const users = await User.find({ role: { $in: roles } });
+        res.json({ status: 'ok', users: users });
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({ status: 'error', error: err.message });
+    }
+});
+
 
 // Assign task to a user
 app.post('/api/tasks', async (req, res) => {
@@ -160,6 +173,33 @@ app.get('/api/tasks', async (req, res) => {
     }
 });
 
+// Endpoint to change the status of a task to "completed"
+app.put('/api/tasks/complete/:title', async (req, res) => {
+    const { title } = req.params;
+    const { assigned_to } = req.body;
+
+    if (!assigned_to) {
+        return res.status(400).json({ status: 'error', message: 'assigned_to field is required' });
+    }
+
+    try {
+        const task = await Task.findOneAndUpdate(
+            { title, assigned_to },
+            { status: 'completed' },
+            { new: true }
+        );
+
+        if (!task) {
+            return res.status(404).json({ status: 'error', message: 'Task not found' });
+        }
+
+        res.json({ status: 'ok', task });
+    } catch (err) {
+        console.error('Error updating task status:', err);
+        res.status(500).json({ status: 'error', error: err.message });
+    }
+});
+
 // Assign user to a team
 app.post('/api/teams', async (req, res) => {
     const { teamName, members } = req.body;
@@ -204,45 +244,69 @@ app.post('/api/teams', async (req, res) => {
 });
 
 
-app.delete('/api/users/:email', async (req, res) => {
-    const { email } = req.params;
+app.delete('/api/users', async (req, res) => {
+    const { email } = req.body;
 
     try {
-        const user = await User.findOne({ email: email, role: 'employee' });
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ status: 'error', message: 'User not found' });
         }
+
+        // Remove user from their team
+        // console.log(user)
+        try{
+            if (user.team_id) {
+                console.log(`Removing ${email} from team ${user.team_id}`);
+                const result = await Team.findByIdAndUpdate(
+                    user.team_id,
+                    { $pull: { members: { user_email: email } } },
+                    { new: true } // Return the updated document
+                );
+                console.log('Updated team:', result);
+            }
+        }catch{
+            console.log("No team_id")
+        }
+
+        // Delete the user
+        await User.deleteOne({ email });
 
         res.json({ status: 'ok', message: 'User deleted' });
     } catch (err) {
         console.error('Error deleting user:', err);
         res.status(500).json({ status: 'error', error: err.message });
+
     }
 });
 
-app.delete('/api/managers/:email', async (req, res) => {
-    const { email } = req.params;
+// app.delete('/api/managers/:email', async (req, res) => {
+//     const { email } = req.params;
 
-    try {
-        const user = await User.findOne({ email: email, role: 'manager' });
-        if (!user) {
-            return res.status(404).json({ status: 'error', message: 'Manager not found' });
-        }
+//     try {
+//         const user = await User.findOne({ email: email, role: 'manager' });
+//         if (!user) {
+//             return res.status(404).json({ status: 'error', message: 'Manager not found' });
+//         }
 
-        await user.remove();
-        res.json({ status: 'ok', message: 'Manager deleted' });
-    } catch (err) {
-        console.error('Error deleting manager:', err);
-        res.status(500).json({ status: 'error', error: err.message });
-    }
-});
+//         await user.remove();
+//         res.json({ status: 'ok', message: 'Manager deleted' });
+//     } catch (err) {
+//         console.error('Error deleting manager:', err);
+//         res.status(500).json({ status: 'error', error: err.message });
+//     }
+// });
 
-// Delete task endpoint by name
-app.delete('/api/tasks/email/:title', async (req, res) => {
+app.delete('/api/tasks/title/:title', async (req, res) => {
     const { title } = req.params;
+    const { assigned_to } = req.query;
+
+    if (!assigned_to) {
+        return res.status(400).json({ status: 'error', message: 'assigned_to parameter is required' });
+    }
 
     try {
-        const task = await Task.findOneAndDelete({ title });
+        const task = await Task.findOneAndDelete({ title, assigned_to });
         if (!task) {
             return res.status(404).json({ status: 'error', message: 'Task not found' });
         }
@@ -253,6 +317,7 @@ app.delete('/api/tasks/email/:title', async (req, res) => {
         res.status(500).json({ status: 'error', error: err.message });
     }
 });
+
 
 
 
