@@ -1,26 +1,44 @@
 // TaskList.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdDeleteForever } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 
 const TaskList = ({ tasks, handleDelete, setCompleted }) => {
-  // if (!tasks || tasks.length === 0) {
-  //   return (
-  //     <div>
-  //       <h2>Task List</h2>
-  //       <p>No tasks available</p>
-  //     </div>
-  //   );
-  // }
+  const [totalTasks, setTotalTasks] = useState(0);
+  const [completedTasks, setCompletedTasks] = useState(0);
+  const [remainingTasks, setRemainingTasks] = useState(0);
+
+  useEffect(() => {
+    const total = tasks.length;
+    const completed = tasks.filter(task => task.status === 'completed').length;
+    const remaining = total - completed;
+
+    setTotalTasks(total);
+    setCompletedTasks(completed);
+    setRemainingTasks(remaining);
+  }, [tasks]);
 
   return (
     <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 flex-col">
         <h1 className="text-2xl font-bold">Tasks</h1>
         {/* <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
           Add Task
         </button> */}
+        <div className='w-full grid grid-cols-1 md:grid-cols-3 gap-14 px-24 my-6 '>
+          <div className='bg-black text-white rounded-xl py-6 mx-12 text-center'>
+            <h2 className='text-xl font-bold'>Total Tasks: <span className='text-3xl ml-4'>{totalTasks}</span></h2>
+          </div>
+
+          <div className='bg-yellow-200 text-black rounded-xl py-6 mx-12 text-center'>
+            <h2 className='text-xl font-bold'>Tasks Completed: <span className='text-3xl ml-4'>{completedTasks}</span></h2>
+          </div>
+
+          <div className='bg-red-200 text-black rounded-xl py-6 mx-12 text-center'>
+            <h2 className='text-xl font-bold'>Remaining Tasks: <span className='text-3xl ml-4'>{remainingTasks}</span></h2>
+          </div>
+        </div>
       </div>
       <table className="w-full bg-white shadow-md rounded">
         <thead>
@@ -39,7 +57,7 @@ const TaskList = ({ tasks, handleDelete, setCompleted }) => {
             //   <div>{task.description}</div>
             //   <button onClick={() => handleDelete(task._id)} className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'>Mark as Completed</button>
             // </li>
-            <TaskRow key={index} task={task} deleteItem={handleDelete} setCompleted={setCompleted}/>
+            <TaskRow key={index} task={task} deleteItem={handleDelete} setCompleted={setCompleted} />
           ))}
         </tbody>
       </table>
@@ -61,18 +79,20 @@ const TaskRow = ({ task, deleteItem, setCompleted }) => {
     'Medium': 'bg-yellow-100 text-yellow-800',
     'Low': 'bg-green-100 text-green-800',
   };
-  const navigate= useNavigate()
-  const handleTaskClick=()=>{
+  const navigate = useNavigate()
+  const handleTaskClick = () => {
     navigate('/task-info', { state: { task } })
   }
+  console.log(task)
+  const formattedDueDate = task.due_date.split('T')[0];
 
   return (
-    <tr className="border-b border-gray-200 hover:bg-gray-100 hover:cursor-pointer" onClick={handleTaskClick}>
-      <td className="py-3 px-4">{task.title}</td>
-      <td className="py-3 px-4">{task.assigned_to}</td>
-      <td className="py-3 px-4">{task.due_date}</td>
+    <tr className="border-b border-gray-200 hover:bg-gray-100 hover:cursor-pointer">
+      <td className="py-3 px-4" onClick={handleTaskClick}>{task.title}</td>
+      <td className="py-3 px-4" onClick={handleTaskClick}>{task.assigned_to}</td>
+      <td className="py-3 px-4" onClick={handleTaskClick}>{formattedDueDate}</td>
       <td className="py-3 px-4">
-        <span className={`px-2 py-1 rounded-full text-xs ${statusClasses[task.status]}`}>
+        <span className={`px-2 py-1 rounded-full text-xs ${statusClasses[task.status]}`} onClick={handleTaskClick}>
           {task.status}
         </span>
       </td>

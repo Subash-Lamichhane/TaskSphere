@@ -31,7 +31,7 @@ const Navbar = () => {
                 className="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200"
                 id="navigation-bar"
             >
-                <div className="flex flex-wrap items-center justify-between w-full mx-20 p-4 max-w-screen-2xl">
+                <div className="flex flex-wrap items-center justify-between w-full px-20 p-4 ">
                     <Link
                         to="/"
                         className="flex items-center space-x-3 rtl:space-x-reverse"

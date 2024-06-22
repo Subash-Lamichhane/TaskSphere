@@ -1,13 +1,26 @@
 // src/AdminView.jsx
 import React from 'react';
 import TaskList from '../TaskList';
+import { useNavigate } from 'react-router-dom';
 
 const AdminView = ({ userDetail, tasks, handleDelete, setCompleteHandler }) => {
+  const navigate = useNavigate()
+
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2">Admin Dashboard</h2>
-      <p className="mt-4">Admin can see all tasks and manage teams.</p>
-      <TaskList tasks={tasks} handleDelete={handleDelete} setCompleteHandler={setCompleteHandler} />
+      <div className='flex justify-between mt-6'>
+        <div>
+          <h2 className="text-xl font-bold mb-2">Admin Dashboard</h2>
+          <p className="mt-4">Admin can see all tasks and manage peoples.</p>
+        </div>
+        <div>
+          <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800" onClick={()=>{navigate('/manage')}}>
+            Manage staffs
+          </button>
+        </div>
+
+      </div>
+      <TaskList tasks={tasks} handleDelete={handleDelete} setCompleted={setCompleteHandler} />
 
       {userDetail.role == "employee" ?
         <div className="mt-4">

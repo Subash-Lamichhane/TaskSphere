@@ -8,6 +8,8 @@ const TaskInfo = () => {
     const location = useLocation();
     const navigate = useNavigate()
     const task = location.state?.task;
+    const formattedDueDate = task.due_date.split('T')[0]; 
+
     const setCompleteHandler = async ({taskTitle, assignedTo}) => {
         try {
             const token = localStorage.getItem('token');
@@ -46,6 +48,7 @@ const TaskInfo = () => {
             console.error('Error deleting task:', error);
         }
     };
+    
     return (
         <>
             <Navbar />
@@ -66,7 +69,7 @@ const TaskInfo = () => {
 
                         <div className="flex">
                             <span className="font-semibold w-32">Due Date:</span>
-                            <span>{task.due_date}</span>
+                            <span>{formattedDueDate}</span>
                         </div>
 
                         <div className="flex items-center">

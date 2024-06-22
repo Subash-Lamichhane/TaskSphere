@@ -1,14 +1,27 @@
 // src/ManagerView.jsx
 import React from 'react';
 import TaskList from '../TaskList';
+import { useNavigate } from 'react-router-dom';
 
 const ManagerView = ({ userDetail, tasks, handleDelete, setCompleteHandler, employeeEmails, handleCreateTeam, selectedEmployees, handleCheckboxChange, teamName, setTeamName }) => {
+    const navigate = useNavigate()
     return (
         <div>
-            <h2 className="text-xl font-bold mb-2">Manager Dashboard</h2>
-            
-            <TaskList tasks={tasks} handleDelete={handleDelete} setCompleteHandler={setCompleteHandler} />
-            
+            <div className='flex justify-between mt-6'>
+                <div>
+                <h2 className="text-xl font-bold mb-2">Manager Dashboard</h2>
+                </div>
+                <div>
+                    <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800" onClick={() => { navigate('/manage') }}>
+                        Manage staffs
+                    </button>
+                </div>
+
+            </div>
+
+
+            <TaskList tasks={tasks} handleDelete={handleDelete} setCompleted={setCompleteHandler} />
+
             {userDetail && !userDetail.team_id && (
                 <div className="mt-4">
                     <h2 className="text-xl font-bold mb-2">Create Team</h2>
