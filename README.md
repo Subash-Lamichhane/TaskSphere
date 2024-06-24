@@ -102,7 +102,7 @@ cd ../backend
 yarn install
 ```
 
-Set up the environment variables by creating a `.env` file in the server directory and add your Gemini API key:
+Set up the environment variables by creating a `.env` file in the server directory and add your PERMIT_KEY:
 
 ```bash
 PERMIT_KEY='permit_key_********************************'
@@ -122,6 +122,7 @@ docker run -it \
   permitio/pdp-v2:latest
 
 ```
+Here you have to add your permit key too
 
 If you want, you can use 
 ```bash
