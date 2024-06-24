@@ -58,6 +58,7 @@ const Manage = () => {
                         <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                             <th className="py-3 px-4 text-left">Name</th>
                             <th className="py-3 px-4 text-left">Email</th>
+                            <th className="py-3 px-4 text-left">Role</th>
                             <th className="py-3 px-4 text-left">Actions</th>
                         </tr>
                     </thead>
@@ -66,7 +67,7 @@ const Manage = () => {
                             <tr className="border-b border-gray-200 hover:bg-gray-100 hover:cursor-pointer" key={index}>
                                 <td className="py-3 px-4">{staff.name}</td>
                                 <td className="py-3 px-4">{staff.email}</td>
-
+                                <td className="py-3 px-4">{staff.role}</td>
                                 <td className="py-3 px-4 flex items-center gap-4">
                                     {/* <button className="mr-2 text-gray-500 hover:text-gray-700">🔄</button>
       <button className="mr-2 text-gray-500 hover:text-gray-700">📝</button>

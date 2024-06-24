@@ -61,23 +61,6 @@ app.post('/api/sign-up', async (req, res) => {
     });
 
     try {
-        const tenantKey = 'task';
-        await permit.api.tenants.create({
-            key: tenantKey,
-            name: "Task Inc",
-            description: "The task website",
-        });
-        console.log("Tenant created");
-    } catch (error) {
-        if (error.response && error.response.data && error.response.data.message.includes('already exists')) {
-            console.log("Tenant already exists");
-        } else {
-            console.error("Error creating tenant:", error);
-            return res.status(500).send({ status: 'error', message: 'Permit error' });
-        }
-    }
-
-    try {
         let taskPermissions = []
         if (role == "admin") {
             taskPermissions = ["task:create", "task:delete", "task:manage", "task:markcompleted", "task:read"];
@@ -181,6 +164,19 @@ app.get('/api/employees/emails', async (req, res) => {
         res.json({ status: 'ok', employees: employeeEmails });
     } catch (err) {
         console.error('Error fetching employee emails:', err);
+        res.status(500).json({ status: 'error', error: err.message });
+    }
+});
+
+// Get employees without a team_id assigned endpoint
+app.get('/api/employees/no-team', async (req, res) => {
+    try {
+        // Find employees with no team_id assigned
+        const employees = await User.find({ role: 'employee', team_id: { $exists: false } });
+
+        res.json({ status: 'ok', employees });
+    } catch (err) {
+        console.error('Error fetching employees without team_id:', err);
         res.status(500).json({ status: 'error', error: err.message });
     }
 });
@@ -327,6 +323,28 @@ app.post('/api/teams', async (req, res) => {
     }
 });
 
+app.put('/api/users/team', async (req, res) => {
+    const { email, team_id } = req.body;
+
+    try {
+        // Update the user's team_id using email
+        const updatedUser = await User.findOneAndUpdate(
+            { email: email },
+            { team_id: team_id },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ status: 'error', message: 'User not found' });
+        }
+
+        res.json({ status: 'ok', user: updatedUser });
+    } catch (err) {
+        console.error('Error updating user team_id:', err);
+        res.status(500).json({ status: 'error', error: err.message });
+    }
+});
+
 
 app.delete('/api/users', async (req, res) => {
     const { email } = req.body;
@@ -363,23 +381,6 @@ app.delete('/api/users', async (req, res) => {
 
     }
 });
-
-// app.delete('/api/managers/:email', async (req, res) => {
-//     const { email } = req.params;
-
-//     try {
-//         const user = await User.findOne({ email: email, role: 'manager' });
-//         if (!user) {
-//             return res.status(404).json({ status: 'error', message: 'Manager not found' });
-//         }
-
-//         await user.remove();
-//         res.json({ status: 'ok', message: 'Manager deleted' });
-//     } catch (err) {
-//         console.error('Error deleting manager:', err);
-//         res.status(500).json({ status: 'error', error: err.message });
-//     }
-// });
 
 app.delete('/api/tasks/title/:title', async (req, res) => {
     const { title } = req.params;

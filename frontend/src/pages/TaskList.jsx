@@ -22,11 +22,11 @@ const TaskList = ({ tasks, handleDelete, setCompleted, permissions }) => {
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6 flex-col">
-        <h1 className="text-2xl font-bold">Tasks</h1>
+        <h1 className="text-3xl font-bold">Tasks</h1>
         {/* <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
           Add Task
         </button> */}
-        <div className='w-full grid grid-cols-1 md:grid-cols-3 gap-14 px-24 my-6 '>
+        <div className='w-full grid grid-cols-1 lg:grid-cols-3 gap-14 md:px-24 my-6 '>
           <div className='bg-black text-white rounded-xl py-6 mx-12 text-center'>
             <h2 className='text-xl font-bold'>Total Tasks: <span className='text-3xl ml-4'>{totalTasks}</span></h2>
           </div>
