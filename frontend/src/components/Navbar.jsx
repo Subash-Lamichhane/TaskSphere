@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaGithub } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
-    const navigate = useNavigate()
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
     const handleLogout=()=>{
         localStorage.clear()
-        navigate('/')
+        window.location.reload();
     }
 
     useEffect(() => {

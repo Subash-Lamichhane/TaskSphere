@@ -4,7 +4,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 
-const TaskList = ({ tasks, handleDelete, setCompleted }) => {
+const TaskList = ({ tasks, handleDelete, setCompleted, permissions }) => {
   const [totalTasks, setTotalTasks] = useState(0);
   const [completedTasks, setCompletedTasks] = useState(0);
   const [remainingTasks, setRemainingTasks] = useState(0);
@@ -57,7 +57,7 @@ const TaskList = ({ tasks, handleDelete, setCompleted }) => {
             //   <div>{task.description}</div>
             //   <button onClick={() => handleDelete(task._id)} className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'>Mark as Completed</button>
             // </li>
-            <TaskRow key={index} task={task} deleteItem={handleDelete} setCompleted={setCompleted} />
+            <TaskRow key={index} task={task} deleteItem={handleDelete} setCompleted={setCompleted} permissions={permissions}/>
           ))}
         </tbody>
       </table>
@@ -67,7 +67,7 @@ const TaskList = ({ tasks, handleDelete, setCompleted }) => {
 
 export default TaskList;
 
-const TaskRow = ({ task, deleteItem, setCompleted }) => {
+const TaskRow = ({ task, deleteItem, setCompleted, permissions }) => {
   const statusClasses = {
     'completed': 'bg-green-100 text-green-800',
     'In Progress': 'bg-yellow-100 text-yellow-800',
@@ -101,8 +101,12 @@ const TaskRow = ({ task, deleteItem, setCompleted }) => {
         {/* <button className="mr-2 text-gray-500 hover:text-gray-700">🔄</button>
         <button className="mr-2 text-gray-500 hover:text-gray-700">📝</button>
         <button className="text-gray-500 hover:text-gray-700">💬</button> */}
-        <button className=' text-red-500 text-3xl r' onClick={() => { deleteItem(task.title, task.assigned_to) }}><MdDeleteForever /></button>
-        <button className='text-green-500 text-2xl' onClick={() => { setCompleted(task.title, task.assigned_to) }}><FaCheckCircle /></button>
+        {permissions.permittedDelete == true &&
+          <button className=' text-red-500 text-3xl r' onClick={() => { deleteItem(task.title, task.assigned_to) }}><MdDeleteForever /></button>
+        }
+        {permissions.permittedMark == true &&
+          <button className='text-green-500 text-2xl' onClick={() => { setCompleted(task.title, task.assigned_to) }}><FaCheckCircle /></button>
+        }
       </td>
     </tr>
   );

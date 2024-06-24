@@ -3,7 +3,7 @@ import React from 'react';
 import TaskList from '../TaskList';
 import { useNavigate } from 'react-router-dom';
 
-const AdminView = ({ userDetail, tasks, handleDelete, setCompleteHandler }) => {
+const AdminView = ({ userDetail, tasks, handleDelete, setCompleteHandler, permissions }) => {
   const navigate = useNavigate()
 
   return (
@@ -13,14 +13,17 @@ const AdminView = ({ userDetail, tasks, handleDelete, setCompleteHandler }) => {
           <h2 className="text-xl font-bold mb-2">Admin Dashboard</h2>
           <p className="mt-4">Admin can see all tasks and manage peoples.</p>
         </div>
-        <div>
-          <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800" onClick={()=>{navigate('/manage')}}>
-            Manage staffs
-          </button>
-        </div>
-
+        {permissions.permittedManage &&
+          <div>
+            <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800" onClick={() => { navigate('/manage') }}>
+              Manage staffs
+            </button>
+          </div>
+        }
       </div>
-      <TaskList tasks={tasks} handleDelete={handleDelete} setCompleted={setCompleteHandler} />
+      {permissions.permittedRead &&
+        <TaskList tasks={tasks} handleDelete={handleDelete} setCompleted={setCompleteHandler} permissions={permissions} />
+      }
 
       {userDetail.role == "employee" ?
         <div className="mt-4">

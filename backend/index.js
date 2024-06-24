@@ -4,12 +4,20 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt'); // Add bcrypt for hashing passwords
 const jwt = require('jsonwebtoken');
+const { Permit } = require('permitio');
 
+const checkPermission = require('./utils/permission');
 const { User, Team, Task } = require('./models');
 
 // Middleware
 app.use(cors());
 app.use(express.json()); // Parse JSON bodies
+
+const permit = new Permit({
+    // you'll have to set the PDP url to the PDP you've deployed in the previous step
+    pdp: 'http://localhost:7766',
+    token: 'permit_key_j0ZtQbuIqRaz5adIpZJB4JneoffsVGGyny71WrpD7NwISEFOElIhx1uhZdFuBwsDVpbeJ8mBqht7ydrCWWqQuO',
+});
 
 // MongoDB connection
 mongoose.connect('mongodb://localhost:27017/userData');
@@ -24,6 +32,7 @@ db.once('open', () => {
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     try {
+
         const user = await User.findOne({ email });
         if (user && await bcrypt.compare(password, user.password)) {
             const token = jwt.sign({
@@ -42,9 +51,71 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// User sign-up endpoint
 app.post('/api/sign-up', async (req, res) => {
     const { fullName, email, password, role } = req.body;
+
+    await permit.api.users.sync({
+        key: email,
+        email: email,
+        first_name: fullName,
+    });
+
+    try {
+        const tenantKey = 'task';
+        await permit.api.tenants.create({
+            key: tenantKey,
+            name: "Task Inc",
+            description: "The task website",
+        });
+        console.log("Tenant created");
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.message.includes('already exists')) {
+            console.log("Tenant already exists");
+        } else {
+            console.error("Error creating tenant:", error);
+            return res.status(500).send({ status: 'error', message: 'Permit error' });
+        }
+    }
+
+    try {
+        let taskPermissions = []
+        if (role == "admin") {
+            taskPermissions = ["task:create", "task:delete", "task:manage", "task:markcompleted", "task:read"];
+        }
+        if (role == "manager") {
+            taskPermissions = ["task:create", "task:delete", "task:markcompleted", "task:read"];
+        }
+        if (role == "employee") {
+            taskPermissions = ["task:create", "task:delete", "task:markcompleted", "task:read"];
+        }
+
+        await permit.api.roles.create({
+            key: role,
+            name: role,
+            description: "A task role",
+            permissions: taskPermissions,
+        });
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.message.includes('already exists')) {
+            console.log("Role already exists");
+        } else {
+            console.error("Error creating role:", error);
+            return res.status(500).send({ status: 'error', message: 'Permit error' });
+        }
+    }
+
+    try {
+        await permit.api.users.assignRole({
+            user: email,
+            role: role,
+            tenant: "default",
+        });
+
+        console.log("User created and role assigned");
+    } catch (error) {
+        console.error("Error assigning role:", error);
+        return res.status(500).send("Error assigning role");
+    }
 
     try {
         const existingUser = await User.findOne({ email });
@@ -54,7 +125,6 @@ app.post('/api/sign-up', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-
         const newUser = await User.create({
             name: fullName,
             email,
@@ -62,17 +132,18 @@ app.post('/api/sign-up', async (req, res) => {
             role
         });
 
-        res.json({ status: 'ok' });
+        return res.json({ status: 'ok' });
     } catch (err) {
         console.error('Error creating user:', err);
-        res.status(500).json({ status: 'error', error: err.message });
+        return res.status(500).json({ status: 'error', error: err.message });
     }
 });
+
 
 // API endpoint to get user role based on token
 app.get('/api/user-role', async (req, res) => {
     const token = req.headers['x-access-token'];
-    
+
     if (!token) {
         return res.status(401).json({ status: 'error', message: 'Token not provided' });
     }
@@ -80,9 +151,22 @@ app.get('/api/user-role', async (req, res) => {
     try {
         const decoded = jwt.verify(token, 'secret123');
         const { name, email, role } = decoded;
-        const user = await User.findOne({email: email})
-        
-        res.json({ status: 'ok', user:{ name, email, role, team_id: user.team_id} });
+        const user = await User.findOne({ email: email })
+
+
+        const permittedCreate = await permit.check(email, 'create', { type: 'task',tenant: 'default'});
+        // await checkPermission(email, 'create', 'task');
+        const permittedDelete = await permit.check(email, 'delete', { type: 'task',tenant: 'default'});
+
+        const permittedManage = await permit.check(email, 'manage', { type: 'task',tenant: 'default'});
+
+        const permittedMark = await permit.check(email, 'markcompleted', { type: 'task',tenant: 'default'});
+
+        const permittedRead = await permit.check(email, 'read', { type: 'task',tenant: 'default'});
+
+        res.json({ status: 'ok', user: { name, email, role, team_id: user.team_id, permissions: 
+            { permittedCreate, permittedDelete, permittedManage, permittedMark, permittedRead }
+         } });
     } catch (error) {
         console.error('Error decoding token:', error);
         res.status(401).json({ status: 'error', message: 'Invalid token' });
@@ -154,7 +238,7 @@ app.get('/api/tasks', async (req, res) => {
     const token = req.headers['x-access-token'];
     try {
         const decoded = jwt.verify(token, 'secret123');
-        const { role, team_id, email  } = decoded;
+        const { role, team_id, email } = decoded;
 
         let tasks;
 
@@ -255,7 +339,7 @@ app.delete('/api/users', async (req, res) => {
 
         // Remove user from their team
         // console.log(user)
-        try{
+        try {
             if (user.team_id) {
                 console.log(`Removing ${email} from team ${user.team_id}`);
                 const result = await Team.findByIdAndUpdate(
@@ -265,7 +349,7 @@ app.delete('/api/users', async (req, res) => {
                 );
                 console.log('Updated team:', result);
             }
-        }catch{
+        } catch {
             console.log("No team_id")
         }
 
@@ -318,35 +402,6 @@ app.delete('/api/tasks/title/:title', async (req, res) => {
     }
 });
 
-
-
-
-app.post('/api/quote', async (req, res) => {
-    const token = req.headers['x-access-token'];
-    try {
-        const decoded = jwt.verify(token, 'secret123');
-        const email = decoded.email;
-        await User.updateOne({ email }, { $set: { quote: req.body.quote } });
-
-        res.json({ status: 'ok', quote: req.body.quote });
-    } catch (error) {
-        console.error(error);
-        res.status(400).json({ status: 'error', error: 'Invalid token' });
-    }
-});
-
-app.get('/api/quote', async (req, res) => {
-    const token = req.headers['x-access-token'];
-    try {
-        const decoded = jwt.verify(token, 'secret123');
-        const email = decoded.email;
-        const user = await User.findOne({ email });
-        res.json({ status: 'ok', quote: user.quote });
-    } catch (error) {
-        console.error(error);
-        res.status(400).json({ status: 'error', error: 'Invalid token' });
-    }
-});
 
 // Start the server
 const PORT = process.env.PORT || 3000;

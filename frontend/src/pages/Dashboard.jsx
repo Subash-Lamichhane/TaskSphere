@@ -20,6 +20,7 @@ const Dashboard = () => {
     const [userDetail, setUserDetail] = useState(null);
     const [dueDate, setDueDate] = useState('');
     const [assignedToEmail, setAssignedToEmail] = useState('');
+    const [permissions, setPermissions] = useState({})
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -55,6 +56,9 @@ const Dashboard = () => {
                         'x-access-token': token,
                     },
                 });
+
+                setPermissions(response.data.user.permissions)
+
                 setUserDetail(response.data.user);
                 setUserRole(response.data.user.role);
                 setSelectedEmployees([response.data.user.email]);
@@ -212,6 +216,7 @@ const Dashboard = () => {
                                     tasks={tasks}
                                     handleDelete={handleDelete}
                                     setCompleteHandler={setCompleteHandler}
+                                    permissions={permissions}
                                 />
                             )}
                             {userRole === 'manager' && (
@@ -226,6 +231,7 @@ const Dashboard = () => {
                                     handleCheckboxChange={handleCheckboxChange}
                                     teamName={teamName}
                                     setTeamName={setTeamName}
+                                    permissions={permissions}
                                 />
                             )}
                             {userRole === 'employee' && (
@@ -234,30 +240,35 @@ const Dashboard = () => {
                                     tasks={tasks}
                                     handleDelete={handleDelete}
                                     setCompleteHandler={setCompleteHandler}
+                                    permissions={permissions}
                                 />
                             )}
-                            <h2 className="text-xl font-bold mt-8 mb-2">Create New Task</h2>
-                            <form onSubmit={handleCreateTask} className="space-y-2">
-                                <div>
-                                    <label htmlFor="newTaskName" className="block text-sm font-medium text-gray-700">Task Name</label>
-                                    <input type="text" id="newTaskName" name="newTaskName" value={newTaskName} onChange={(e) => setNewTaskName(e.target.value)} required className="mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
-                                </div>
-                                <div>
-                                    <label htmlFor="newTaskDescription" className="block text-sm font-medium text-gray-700">Task Description</label>
-                                    <textarea id="newTaskDescription" name="newTaskDescription" value={newTaskDescription} onChange={(e) => setNewTaskDescription(e.target.value)} rows={3} className="mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" required/>
-                                </div>
-                                <div>
-                                    <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">Due Date</label>
-                                    <input type="date" id="dueDate" name="dueDate" onChange={(e) => setDueDate(e.target.value)} className="mt-1 block px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" required/>
-                                </div>
-                                {(userRole === 'manager' || userRole === 'admin') && (
-                                    <div>
-                                        <label htmlFor="assignedToEmail" className="block text-sm font-medium text-gray-700">Assigned To Email</label>
-                                        <input type="email" id="assignedToEmail" name="assignedToEmail" onChange={(e) => setAssignedToEmail(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" required/>
-                                    </div>
-                                )}
-                                <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mt-4">Create Task</button>
-                            </form>
+                            {permissions.permittedCreate == true &&
+                                <>
+                                    <h2 className="text-xl font-bold mt-8 mb-2">Create New Task</h2>
+                                    <form onSubmit={handleCreateTask} className="space-y-2">
+                                        <div>
+                                            <label htmlFor="newTaskName" className="block text-sm font-medium text-gray-700">Task Name</label>
+                                            <input type="text" id="newTaskName" name="newTaskName" value={newTaskName} onChange={(e) => setNewTaskName(e.target.value)} required className="mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="newTaskDescription" className="block text-sm font-medium text-gray-700">Task Description</label>
+                                            <textarea id="newTaskDescription" name="newTaskDescription" value={newTaskDescription} onChange={(e) => setNewTaskDescription(e.target.value)} rows={3} className="mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" required />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">Due Date</label>
+                                            <input type="date" id="dueDate" name="dueDate" onChange={(e) => setDueDate(e.target.value)} className="mt-1 block px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" required />
+                                        </div>
+                                        {(userRole === 'manager' || userRole === 'admin') && (
+                                            <div>
+                                                <label htmlFor="assignedToEmail" className="block text-sm font-medium text-gray-700">Assigned To Email</label>
+                                                <input type="email" id="assignedToEmail" name="assignedToEmail" onChange={(e) => setAssignedToEmail(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" required />
+                                            </div>
+                                        )}
+                                        <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mt-4">Create Task</button>
+                                    </form>
+                                </>
+                            }
                         </>
                     )}
                 </div>
