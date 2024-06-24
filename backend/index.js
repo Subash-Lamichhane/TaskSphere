@@ -12,11 +12,12 @@ const { User, Team, Task } = require('./models');
 // Middleware
 app.use(cors());
 app.use(express.json()); // Parse JSON bodies
+require('dotenv').config();
 
 const permit = new Permit({
     // you'll have to set the PDP url to the PDP you've deployed in the previous step
     pdp: 'http://localhost:7766',
-    token: 'permit_key_j0ZtQbuIqRaz5adIpZJB4JneoffsVGGyny71WrpD7NwISEFOElIhx1uhZdFuBwsDVpbeJ8mBqht7ydrCWWqQuO',
+    token: process.env.PERMIT_KEY,
 });
 
 // MongoDB connection

@@ -22,7 +22,7 @@ export default function About() {
                             </div>
                             <h3 className="text-xl font-semibold">Admin</h3>
                         </div>
-                        <p className="text-muted-foreground">Can create, read, and delete all tasks and manage all users.</p>
+                        <p className="text-muted-foreground">Can read, and delete all tasks and manage all users.</p>
                     </div>
                     <div className="bg-muted rounded-lg p-6 space-y-4 bg-gray-100">
                         <div className="flex items-center gap-3">
@@ -42,7 +42,7 @@ export default function About() {
                             </div>
                             <h3 className="text-xl font-semibold">Employee</h3>
                         </div>
-                        <p className="text-muted-foreground">Can view, create and update tasks assigned to them.</p>
+                        <p className="text-muted-foreground">Can view and update tasks assigned to them.</p>
                     </div>
                 </div>
                 <p className="text-xl text-muted-foreground  text-center mt-10 bg-gray-100 px-10 rounded-xl py-4">
