@@ -58,7 +58,7 @@ TaskSphere boasts a clean, intuitive interface designed with Tailwind CSS, makin
 
 
 ## Demo 
-<video src=""></video>
+<video src="https://github.com/Subash-Lamichhane/TaskSphere/assets/109226874/cc105b24-2f6a-450f-9ddd-29de5a54d39b"></video>
 
 ## Getting Started
 
@@ -102,11 +102,12 @@ cd ../backend
 yarn install
 ```
 
-<!-- Set up the environment variables by creating a `.env.local` file in the server directory and add your Gemini API key:
+Set up the environment variables by creating a `.env` file in the server directory and add your Gemini API key:
 
 ```bash
-API_KEY=AIzaS*************
-``` -->
+PERMIT_KEY='permit_key_********************************'
+```
+
 Pull PDP container
 ```bash
 docker pull permitio/pdp-v2:latest
@@ -116,11 +117,17 @@ Run the container
 ```bash
 docker run -it \
   -p 7766:7000 \
-  --env PDP_API_KEY=permit_key_j0ZtQbuIqRaz5adIpZJB4JneoffsVGGyny71WrpD7NwISEFOElIhx1uhZdFuBwsDVpbeJ8mBqht7ydrCWWqQuO \
+  --env PDP_API_KEY= YOUR_PERMIT_KEY\
   --env PDP_DEBUG=True \
   permitio/pdp-v2:latest
 
 ```
+
+If you want, you can use 
+```bash
+permit_key_j0ZtQbuIqRaz5adIpZJB4JneoffsVGGyny71WrpD7NwISEFOElIhx1uhZdFuBwsDVpbeJ8mBqht7ydrCWWqQuO
+```
+as your permit key.
 
 Start the backend server:
 
@@ -145,20 +152,20 @@ http://localhost:3000
 ## Screenshots
 
 <!-- Add your screenshots here -->
-<!-- Landing Page:
-![Landing1](https://github.com/Subash-Lamichhane/StudyMate/assets/109226874/c310e4b9-32ed-4bf0-9d78-7a308dec6104)
+Landing Page:
+![Landing1](https://github.com/Subash-Lamichhane/TaskSphere/assets/109226874/66af3bcf-2dfe-4f32-a3a4-de9f48a1ce63)
 
-![Landing2](https://github.com/Subash-Lamichhane/StudyMate/assets/109226874/07ad7018-2b71-4460-affe-8859e8bb7cef)
 
 Home Page:
-![HomePage](https://github.com/Subash-Lamichhane/StudyMate/assets/109226874/c20173e3-a501-4a6d-9aab-7a1d99fc1945)
+![HomePage](https://github.com/Subash-Lamichhane/TaskSphere/assets/109226874/fe1b3db7-e2fe-4015-9860-d636df8072bf)
 
-Summary Page:
-![SummaryPage1](https://github.com/Subash-Lamichhane/StudyMate/assets/109226874/f86fde3c-032f-4dd9-8156-b434518cf4b5)
+About Page:
+![AboutPage](https://github.com/Subash-Lamichhane/TaskSphere/assets/109226874/57776da9-174f-463a-a51a-ecbd2fa2f75a)
+
 <!-- ![SummaryPage1](https://github.com/Subash-Lamichhane/StudyMate/assets/109226874/89d27d65-38ed-46c9-a4fa-51e8c4371cfd) -->
 
-<!-- Flashcards Page:
-![Flashcards](https://github.com/Subash-Lamichhane/StudyMate/assets/109226874/4bb5f647-125f-476e-99a3-92872259ed65) --> -->
+Task Details Page:
+![TaskDetails](https://github.com/Subash-Lamichhane/TaskSphere/assets/109226874/ea9f3529-b05d-4141-8b5d-ff64defb9aff)
 
 ## Contributing
 
