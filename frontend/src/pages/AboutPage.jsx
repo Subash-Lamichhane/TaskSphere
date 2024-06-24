@@ -45,6 +45,9 @@ export default function About() {
                         <p className="text-muted-foreground">Can view, create and update tasks assigned to them.</p>
                     </div>
                 </div>
+                <p className="text-xl text-muted-foreground  text-center mt-10 bg-gray-100 px-10 rounded-xl py-4">
+                        The assigned permissions can be easily changes with permit.io and these changes are reflected in real time.
+                    </p>
             </div>
             <Footer/>
 

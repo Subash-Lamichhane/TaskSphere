@@ -15,7 +15,7 @@ const FAQ = () => {
     },
     {
       question: "What can a Manager do within the task management system?",
-      answer: "Managers can create, read, update, and delete tasks assigned to their team. They also have the ability to manage team members by assigning tasks, tracking team progress, and ensuring that the team meets their deadlines and goals."
+      answer: "Managers can create, read, and delete tasks assigned to their team. They also have the ability to manage team members by assigning tasks, tracking team progress, and ensuring that the team meets their deadlines and goals."
     },
     {
       question: "What permissions does an Employee have in the task management system?",

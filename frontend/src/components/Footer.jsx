@@ -10,7 +10,7 @@ const Footer = ({ darkMode = true }) => {
         <div className="md:flex md:justify-between">
           <div className="mb-6 md:mb-0">
             <a href="https://flowbite.com/" className="flex items-center">
-              <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Task<span className=" text-yellow-500">Management</span></span>
+              <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Task<span className="text-purple-600">Sphere</span></span>
             </a>
           </div>
           <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
@@ -18,10 +18,10 @@ const Footer = ({ darkMode = true }) => {
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Resources</h2>
               <ul className="text-gray-500 dark:text-gray-400 font-medium">
                 <li className="mb-4">
-                  <a href="#" className="hover:underline">Opal</a>
+                  <a href="https://opal.ac/" className="hover:underline">Opal</a>
                 </li>
                 <li>
-                  <a href="https://tailwindcss.com/" className="hover:underline">Tailwind CSS</a>
+                  <a href="https://www.permit.io/" className="hover:underline">Permit.io</a>
                 </li>
               </ul>
             </div>

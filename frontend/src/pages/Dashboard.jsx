@@ -19,6 +19,7 @@ const Dashboard = () => {
     const [newTaskDescription, setNewTaskDescription] = useState('');
     const [userDetail, setUserDetail] = useState(null);
     const [dueDate, setDueDate] = useState('');
+    const [error, setError] = useState(null);
     const [assignedToEmail, setAssignedToEmail] = useState('');
     const [permissions, setPermissions] = useState({})
     const navigate = useNavigate()
@@ -169,6 +170,7 @@ const Dashboard = () => {
             }
 
         } catch (error) {
+            setError('Error creating task. Please try again. Make sure that you have joined team to create task');
             console.error('Error creating task:', error);
         }
     };
@@ -244,7 +246,10 @@ const Dashboard = () => {
                                 />
                             )}
                             {permissions.permittedCreate == true &&
-                                <>
+                                <>  
+                                {error && 
+                                    <div className="bg-red-300 w-full text-center py-4 font-semibold text-gray-800 text-xl rounded-xl mt-6">{error}</div>
+                                }
                                     <h2 className="text-xl font-bold mt-8 mb-2">Create New Task</h2>
                                     <form onSubmit={handleCreateTask} className="space-y-2">
                                         <div>

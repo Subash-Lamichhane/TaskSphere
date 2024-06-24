@@ -8,35 +8,9 @@ import ReactTypingEffect from "react-typing-effect";
 
 function HeroSection() {
   return (
-    <div className="bg-[#bba8ff]  w-full min-h-screen">
+    <div className="bg-gradient-to-r from-[#ffeaf1] via-[#fff6f3] to-[#fff3ea] w-full min-h-screen">
       <section className="container mx-auto px-4 md:px-6 py-12 md:py-24 lg:py-32 ">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center ">
-          {/* <div className="space-y-4">
-            <h1 className="text-5xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-              Streamline Your Team's Productivity
-            </h1>
-            <p className="max-w-[600px] text-muted-foreground md:text-xl">
-              Effortlessly manage tasks, track progress, and collaborate with your team using our powerful Task Tracker
-              system.
-            </p>
-            <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Link
-                to='/dashboard'
-                className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-black text-white"
-                
-              >
-                Get Started
-              </Link>
-              <Link
-                to='/dashboard'
-                className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white"
-                
-              >
-                Learn More
-              </Link>
-            </div>
-          </div> */}
-
           <div
             className="flex flex-col justify-center space-y-4"
             initial={{ opacity: 0 }}
@@ -44,18 +18,17 @@ function HeroSection() {
             transition={{ delay: 0.5, duration: 0.8 }}
           >
             <div className="space-y-2">
-              <h1 className="text-5xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none ">
+              <h1 className="text-5xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r from-purple-700 via-indigo-600 to-cyan-600">
                 Streamline Your Team's Productivity
-                <div className="text-red-600">
+                <div className="text-orange-600">
                   <ReactTypingEffect
                         speed={200}
-                        text={["Task Creation", "Manage Staffs", "Streamline Workflow"]}
+                        text={["Collaborative Planning", "Efficient Task Allocation", "Interactive Dashboard"]}
                       />
-                  
                 </div>
               </h1>
               <p className="max-w-[600px] text-gray-600 md:text-xl pt-3">
-
+              Empower your team with TaskSphere {'–'} the ultimate task management solution. Integrated with Permit.io for seamless permission updates, streamline workflows, collaborate effortlessly, and track progress to ensure timely task completion.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row pt-4">

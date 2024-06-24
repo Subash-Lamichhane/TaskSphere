@@ -37,7 +37,7 @@ const Navbar = () => {
                         id="studyPal"
                     >
                         <span className="self-center text-2xl font-[600] whitespace-nowrap">
-                            Task<span className="text-yellow-500">Management</span>
+                        Task<span className="text-purple-600">Sphere</span>
                         </span>
                     </Link>
                     <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
