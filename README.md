@@ -122,7 +122,7 @@ docker run -it \
   permitio/pdp-v2:latest
 
 ```
-
+Here you have to add your YOUR_PERMIT_KEY key to connect to permit.io.
 
 
 Start the backend server:
