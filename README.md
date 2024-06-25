@@ -46,7 +46,10 @@ TaskSphere uses Permit.io to manage roles and permissions seamlessly, ensuring t
 
 ### Task Management
 
-Admins and managers can create, update, and delete tasks, while employees can view and change the status of their assigned tasks, facilitating efficient workflow management.
+Users can view, create, update, and delete tasks and change the status of their assigned tasks, facilitating efficient workflow management. 
+
+Employees can view and manage their assigned tasks and users if permitted. Managers can view and manage tasks within their teams, as well as those assigned to them. Admins have full access to view, manage all tasks in the database, manage users based on permissions assigned to them from permit.io.
+These permissions can be easily changed from permit.io.
 
 ### Staff Management
 
