@@ -83,7 +83,6 @@ const TaskRow = ({ task, deleteItem, setCompleted, permissions }) => {
   const handleTaskClick = () => {
     navigate('/task-info', { state: { task } })
   }
-  console.log(task)
   const formattedDueDate = task.due_date.split('T')[0];
 
   return (

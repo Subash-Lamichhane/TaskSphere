@@ -18,7 +18,7 @@ const ManagerView = ({ userDetail, tasks, handleDelete, setCompleteHandler, empl
                         'x-access-token': token,
                     },
                 });
-                console.log(response.data)
+                // console.log(response.data)
                 setNoTeamList(response.data.employees);
             } catch (error) {
                 console.error('Error fetching employee emails:', error);

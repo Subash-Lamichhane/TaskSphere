@@ -4,7 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt'); // Add bcrypt for hashing passwords
 const jwt = require('jsonwebtoken');
-const { Permit } = require('permitio');
+const { Permit, PermitApiError } = require('permitio');
 
 const checkPermission = require('./utils/permission');
 const { User, Team, Task } = require('./models');
@@ -60,6 +60,28 @@ app.post('/api/sign-up', async (req, res) => {
         email: email,
         first_name: fullName,
     });
+
+    try {
+        await permit.api.resources.create({
+          key: "task",
+          name: "task",
+          actions: {
+            read: {},
+            create: {},
+            delete: {},
+            manage: {},
+            markcompleted: {},
+          },
+        });
+      } catch (error) {
+        if (error instanceof PermitApiError) {
+          if (error.response?.status === 409) {
+            console.log(`already exists!`);
+          } else {
+            return res.status(500).send({ status: 'error', message: 'Permit error' });
+          }
+        }
+      }
 
     try {
         let taskPermissions = []

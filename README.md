@@ -102,7 +102,7 @@ cd ../backend
 yarn install
 ```
 
-Set up the environment variables by creating a `.env` file in the server directory and add your Gemini API key:
+Set up the environment variables by creating a `.env` file in the server directory and add your permit.io key:
 
 ```bash
 PERMIT_KEY='permit_key_********************************'
@@ -123,11 +123,7 @@ docker run -it \
 
 ```
 
-If you want, you can use 
-```bash
-permit_key_j0ZtQbuIqRaz5adIpZJB4JneoffsVGGyny71WrpD7NwISEFOElIhx1uhZdFuBwsDVpbeJ8mBqht7ydrCWWqQuO
-```
-as your permit key.
+
 
 Start the backend server:
 
