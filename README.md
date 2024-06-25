@@ -69,6 +69,7 @@ TaskSphere boasts a clean, intuitive interface designed with Tailwind CSS, makin
 - Express
 - MongoDB
 - Permit.io
+- Docker
 
 ### Installation
 
@@ -102,7 +103,7 @@ cd ../backend
 yarn install
 ```
 
-Set up the environment variables by creating a `.env` file in the server directory and add your permit.io key:
+Set up the environment variables by creating a `.env` file in the backend directory and add your permit.io key:
 
 ```bash
 PERMIT_KEY='permit_key_********************************'
